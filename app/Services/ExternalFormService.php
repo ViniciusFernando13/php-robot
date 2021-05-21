@@ -9,7 +9,7 @@ class ExternalFormService
 {
 
     /**
-     * fill out form by URL
+     * fill external form by URL
      * @param string $url
      * @param Array $inputs
      * @return void

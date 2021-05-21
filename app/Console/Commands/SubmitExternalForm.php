@@ -3,9 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Services\ExternalFormService;
-use DOMDocument;
-use Facebook\WebDriver\Chrome\ChromeDriver;
-use Facebook\WebDriver\WebDriverBy;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -23,7 +20,7 @@ class SubmitExternalForm extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Fill external form by URL';
 
     /**
      * Create a new command instance.
