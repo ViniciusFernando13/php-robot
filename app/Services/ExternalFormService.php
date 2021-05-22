@@ -14,11 +14,8 @@ class ExternalFormService
      * @param Array $inputs
      * @return void
      */
-    public function run(string $url, array $inputs)
+    public function run(string $url, array $inputs, $driver)
     {
-        // init chrome driver
-        putenv('WEBDRIVER_CHROME_DRIVER=./storage/chromedriver');
-        $driver = ChromeDriver::start();
 
         // open driver with url
         $driver->get($url);

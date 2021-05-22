@@ -14,45 +14,46 @@ class DownloadFileService
     /**
      * Download file and return content
      * @param string $url
-     * @return string
+     * @return string|boolean
      */
-    public function run(string $url)
+    public function runDownloadFile(string $url, $driver)
     {
-        // init chrome driver
-        putenv('WEBDRIVER_CHROME_DRIVER=./storage/chromedriver');
-        $opt = new ChromeOptions();
-        $opt->setExperimentalOption('prefs', [
-            'download.default_directory' => '/var/www/html/teste-tk/storage/downloads',
-            "download.prompt_for_download" => false,
-            "download.directory_upgrade" => true,
-            "safebrowsing.enabled" => true,
-        ]);
-        $capabilities = DesiredCapabilities::chrome();
-        $capabilities->setCapability(ChromeOptions::CAPABILITY_W3C, $opt);
-        $driver = ChromeDriver::start($capabilities);
 
         // open driver with url
         $driver->get($url);
 
         // find download button and click
         $btnDownload = $driver->findElement(WebDriverBy::id('direct-download'));
-        if ($btnDownload) $btnDownload->click();
+        if ($btnDownload) {
+            $btnDownload->click();
 
-        // await download
-        while (!Storage::disk('downloads')->exists('textfile.txt')) {
-            sleep(1);
+            // await download
+            while (!Storage::disk('downloads')->exists('textfile.txt')) {
+                sleep(1);
+            }
+
+            return 'textfile.txt';
         }
+        return false;
+    }
 
-        // close browser
-        $driver->close();
+    /**
+     * Download file and return content
+     * @param string $url
+     * @return string
+     */
+    public function runDownloadAndExcludeFile(string $url, $driver) {
+        if($fileName = $this->runDownloadFile($url, $driver)) {
 
-        // get content by file
-        $content = Storage::disk('downloads')->get('textfile.txt');
-        
-        // delete file
-        Storage::disk('downloads')->delete('textfile.txt');
-        
-        // return content
-        return $content;
+            // get content by file
+            $content = Storage::disk('downloads')->get($fileName);
+
+            // delete file
+            Storage::disk('downloads')->delete($fileName);
+
+            // return content
+            return $content;
+            
+        }
     }
 }

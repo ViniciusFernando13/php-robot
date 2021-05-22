@@ -3,27 +3,28 @@
 namespace App\Console\Commands;
 
 use App\Services\DownloadFileService;
+use App\Services\ExternalFormService;
 use Facebook\WebDriver\Chrome\ChromeDriver;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
-use Facebook\WebDriver\WebDriverBy;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
-class DownloadFile extends Command
+class UploadFile extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'download_file:run {url=https://testpages.herokuapp.com/styled/download/download.html}';
+    protected $signature = 'upload_file:run {urlDownload=https://testpages.herokuapp.com/styled/download/download.html} {urlUpload=https://testpages.herokuapp.com/styled/file-upload-test.html}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Download file by url';
+    protected $description = 'Upload file in url';
 
     /**
      * Create a new command instance.
@@ -42,10 +43,10 @@ class DownloadFile extends Command
      */
     public function handle()
     {
-        $url = $this->argument('url');
-        $this->info("Acessando url: $url");
+        $urlDownload = $this->argument('urlDownload');
+        $urlUpload = $this->argument('urlUpload');
+        $this->info("Acessando url: $urlDownload");
         $this->info('Fazendo download');
-        $downloadFileService = new DownloadFileService;
 
         // init chrome driver
         putenv('WEBDRIVER_CHROME_DRIVER=./storage/chromedriver');
@@ -59,11 +60,26 @@ class DownloadFile extends Command
         $capabilities = DesiredCapabilities::chrome();
         $capabilities->setCapability(ChromeOptions::CAPABILITY_W3C, $opt);
         $driver = ChromeDriver::start($capabilities);
-        $fileContent = $downloadFileService->runDownloadAndExcludeFile($url, $driver);
+        $downloadFileService = new DownloadFileService;
+        $fileName = $downloadFileService->runDownloadFile($urlDownload, $driver);
+        $externalFormService = new ExternalFormService;
+        $this->info($fileName);
+        $inputs = [
+            'filename'  => [
+                'type'  => 'input',
+                'value' => storage_path('downloads') . "/$fileName",
+            ],
+            'filetype'  => [
+                'type'  => 'radio',
+                'value' => 'text',
+            ],
+        ];
+        $this->info("Acessando url: $urlUpload");
+        $this->info('Fazendo upload');
+        $externalFormService->run($urlUpload, $inputs, $driver);
 
-        // close browser
-        $driver->close();
-        $this->info($fileContent);
-        return $fileContent;
+        // delete file
+        Storage::disk('downloads')->delete($fileName);
+        return;
     }
 }

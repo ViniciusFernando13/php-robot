@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\ExternalFormService;
+use Facebook\WebDriver\Chrome\ChromeDriver;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -59,7 +60,7 @@ class SubmitExternalForm extends Command
                 ],
                 'filename'  => [
                     'type'  => 'input',
-                    'value' => '/var/www/html/teste-tk/storage/teste.txt',
+                    'value' => storage_path('files').'/teste.txt',
                 ],
                 'checkboxes'        => [
                     'type'  => 'checkbox',
@@ -78,7 +79,10 @@ class SubmitExternalForm extends Command
                     'value' => 'dd6',
                 ],
             ];
-            $externalFormService->run($url, $inputs);
+            // init chrome driver
+            putenv('WEBDRIVER_CHROME_DRIVER=./storage/chromedriver');
+            $driver = ChromeDriver::start();
+            $externalFormService->run($url, $inputs, $driver);
             return;
         } catch (Throwable $th) {
             $this->error($th->getMessage());
