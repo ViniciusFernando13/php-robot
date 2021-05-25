@@ -2,9 +2,6 @@
 
 namespace App\Services;
 
-use Facebook\WebDriver\Chrome\ChromeDriver;
-use Facebook\WebDriver\Chrome\ChromeOptions;
-use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\WebDriverBy;
 use Illuminate\Support\Facades\Storage;
 

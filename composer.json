@@ -11,7 +11,8 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.40",
         "laravel/tinker": "^2.5",
-        "php-webdriver/webdriver": "^1.11"
+        "php-webdriver/webdriver": "^1.11",
+        "spatie/pdf-to-text": "^1.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

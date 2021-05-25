@@ -20,7 +20,7 @@ $config = [
 Route::group(
     $config,
     function (Router $router) {
-
-        $router->get('/', 'TestController@index');
+        $router->get('/pdfs_to_csv', 'TestController@pdfs_to_csv');
+        $router->get('/table', 'TestController@table');
     }
 );
